@@ -1,11 +1,126 @@
 <!DOCTYPE html>
 <html>
-<head>
-<title>Cheese clock</title>
-</head>
+	<head>
+		<title>Cheese clock</title>
+		<link href='https://fonts.googleapis.com/css?family=Roboto+Slab:700' rel='stylesheet' type='text/css'>
+		<link href='https://fonts.googleapis.com/css?family=Montserrat' rel='stylesheet' type='text/css'>
+		<script src="https://code.jquery.com/jquery-2.2.1.min.js"></script>
+	</head>
+	<style>
+	body {
+		max-width: 500px;
+		text-align: center;
+		margin: 0;
+		background: #061F2E;
+		font-family: 'Montserrat', sans-serif;
+	}
 
-<body>
-The content of the document......
-</body>
+	button {
+		width: 80%;
+		max-width: 350px;
+		margin-left: auto;
+		margin-right: auto;
+		min-width: 150px;
+		padding: 15px;
+		margin-bottom: 15px;
+		background-color: #0B3C59;
+		border: none;
+		color: white;
+		font-size: 24px;
+		
+	}
+	
+	#timer {
+		color: white;
+		margin-top: 15px;
+		margin-bottom: 15px;
+		font-size: 50px;
+	
+	}
+	
+	h1 {
+		font-family: 'Roboto Slab', serif;
+		font-weight: 700;
+		font-size: 40px;
+		background-color: #A6181B;
+		color: white;
+		width: 100%;
+		padding: 15px;
+		margin: 0;
+	}
+	</style>
+	<body>
+		<h1>Cheesed Off</h1>
+		<div id="timer">00:30:00</div>
+		<button value="GO">GO</button>
+		<div>
+		<button value="+15">Add 15 seconds</button><button value="-15">Minus 15 seconds</button>
+		</div><div>
+		<button value="+30">Add 30 seconds</button><button value="-30">Minus 30 seconds</button>
+		</div><div>
+		<button value="+60">Add 60 seconds</button><button value="-60">Minus 60 seconds</button>
+		</div>
+	</body>
+	
+	<script>
+	Number.prototype.toTime = function () {
+		var minutes = Math.floor(this / 60);
+		var seconds = this - (minutes * 60);
 
+		if (minutes < 10) {minutes = "0"+minutes;}
+		if (seconds < 10) {seconds = "0"+seconds;}
+		var time    = minutes+':'+seconds;
+		return time;
+	}
+	
+	$(document).ready(function() {
+		var seconds = 30;
+		
+		function setTime() {
+			var time = "";
+			if(seconds > 0) {
+				$("#timer").text(seconds.toTime());
+			}
+			else if(seconds > -30) {
+				$("#timer").text("Stop sculpting, keep guessing");
+			}
+			else {
+				$("#timer").text("Stop guessing");
+			}
+		}
+		
+		var timer = null;
+		
+		$("button").click(function() {
+			
+			if(timer !== null) {
+				clearInterval(timer);
+				timer = null;
+				seconds = 30;
+			}
+			
+			var command = $(this).val();
+			
+			if(command === "GO") {
+				timer = setInterval(function() {
+					seconds = seconds - 1;
+					setTime();
+				}, 1000);
+			}
+			else if(command[0]==="-") {
+				seconds = seconds - parseInt(command.substring(1), 10);
+				if(seconds < 15) {
+					seconds = 15;
+				}
+			}
+			else {
+				seconds = seconds + parseInt(command.substring(1), 10);
+			}
+			setTime();
+			
+		});
+		
+		setTime();
+	});
+	</script>
 </html>
