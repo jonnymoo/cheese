@@ -63,21 +63,24 @@
 	
 	<script>
 	Number.prototype.toTime = function () {
-		var minutes = Math.floor(this / 60);
-		var seconds = this - (minutes * 60);
+		var abs = Math.abs(this);
+		
+		var minutes = Math.floor(abs / 60);
+		var seconds = abs - (minutes * 60);
 
 		if (minutes < 10) {minutes = "0"+minutes;}
 		if (seconds < 10) {seconds = "0"+seconds;}
-		var time    = minutes+':'+seconds;
+		var time    = (this > 0 ? "-":"") + minutes+':'+seconds;
 		return time;
 	}
 	
 	$(document).ready(function() {
 		var seconds = 30;
-		
+		var timer = null;
+
 		function setTime() {
 			var time = "";
-			if(seconds > 0) {
+			if(timer === null || seconds > 0) {
 				$("#timer").text(seconds.toTime());
 			}
 			else if(seconds > -30) {
@@ -87,8 +90,6 @@
 				$("#timer").text("Stop guessing");
 			}
 		}
-		
-		var timer = null;
 		
 		$("button").click(function() {
 			
@@ -101,6 +102,9 @@
 			var command = $(this).val();
 			
 			if(command === "GO") {
+				if(seconds < 15) {
+					seconds = 15;
+				}
 				timer = setInterval(function() {
 					seconds = seconds - 1;
 					setTime();
@@ -108,9 +112,6 @@
 			}
 			else if(command[0]==="-") {
 				seconds = seconds - parseInt(command.substring(1), 10);
-				if(seconds < 15) {
-					seconds = 15;
-				}
 			}
 			else {
 				seconds = seconds + parseInt(command.substring(1), 10);
